@@ -6,29 +6,28 @@ export default function About() {
           <h2 className="text-3xl font-bold uppercase mb-4">SOBRE NÓS</h2>
           <div className="space-y-10 px-4 lg:px-0 mx-auto max-w-3xl text-left lg:text-center">
             <p className="text-gray-400">
-              Em Bragança Paulista, interior de São Paulo, em meados de 2020, uma ideia tomou forma, nascida da mente de Adão Oliveira. Adão decidiu embarcar em uma jornada de inovação e excelência na fabricação de tacos de bilhar e sinuca. Assim, nasceu a NORMITH-TACOS, uma empresa dedicada a oferecer aos adeptos desses esportes um produto de qualidade superior.
+              NORMITH ALTA PERFORMANCE EM BILHAR
+              SOBE NÓS
+              A NORMITH Tacos consolidou-se como uma das principais referências no mercado de engenharia e manufatura de tacos de alta performance, acumulando uma trajetória sólida de 10 anos no desenvolvimento de equipamentos profissionais para o cenário nacional e internacional. Fundada sobre os pilares da precisão técnica e do profundo conhecimento anatômico do esporte, a NORMITH direciona seus esforços estritamente para a evolução do jogo. Cada taco NORMITH carrega consigo a chancela de durabilidade, estabilidade e equilíbrio exigidos por atletas de alto rendimento, eliminando distrações e potencializando a conexão entre o jogador e a mesa.
             </p>
             <div>
-              <strong className="block text-white uppercase mb-2">Desenvolvimento e Inovação</strong>
+              <strong className="block text-white uppercase mb-2">DESENVOLVIMENTO E INOVAÇÃO</strong>
               <p className="text-gray-400">
-                Com os planos traçados, chegou o momento de transformar ideias em realidade. Adão investiu em protótipos, processos produtivos e automação, desenvolvendo técnicas inovadoras de seleção e tratamento da madeira. Com o apoio de profissionais especializados, cada detalhe foi cuidadosamente planejado para garantir a qualidade e eficiência dos tacos NORMITH-TACOS.
+                O processo de engenharia da NORMITH Tacos baseia-se em constantes estudos biomecânicos e testes práticos realizados em conjunto com entusiastas e competidores dos mais variados níveis técnicos. A idealização de cada linha de produtos é conduzida por uma equipe técnica de larga experiência no ramo de produção de tacos de alta performance, capaz de traduzir as necessidades reais do esporte em soluções físicas precisas. Para transformar esses conceitos em realidade, a NORMITH utiliza maquinários de última geração e equipamentos especialmente projetados para usinagem, alinhamento e tratamentos térmicos e de umidade das madeiras nobres, garantindo um padrão construtivo rigoroso e repetível.
               </p>
             </div>
             <div>
-              <strong className="block text-white uppercase mb-2">Qualidade e Excelência</strong>
+              <strong className="block text-white uppercase mb-2">QUALIDADE E EXCELÊNCIA</strong>
               <p className="text-gray-400">
-                A NORMITH-TACOS rapidamente se destacou no mercado, oferecendo uma variedade de 28 modelos de tacos, desde níveis profissionais até semi-profissionais. Cada taco foi cuidadosamente projetado, utilizando as melhores madeiras, acessórios e componentes de alta qualidade. O resultado? Verdadeiras obras de arte, reconhecidas pela sua qualidade e desempenho excepcionais.
+                A excelência técnica de um autêntico taco NORMITH reflete-se na seleção cirúrgica de matérias-primas e na aplicação rigorosa de tolerâncias micrométricas na sua fabricação. Os modelos e configurações disponíveis no portfólio da NORMITH Tacos são estruturados de forma a atender com exatidão a qualquer quesito solicitado por jogadores altamente exigentes — desde a flexibilidade ideal da ponteira até o balanceamento perfeito do peso traseiro. A busca contínua pela perfeição resulta em um produto final que oferece máxima transferência de energia, deflexão minimizada e uma consistência tátil superior, transformando o ato de jogar em uma experiência de absoluta precisão.
               </p>
             </div>
             <div>
-              <strong className="block text-white uppercase mb-2">Visão de Futuro</strong>
+              <strong className="block text-white uppercase mb-2">VISÃO DE FUTURO</strong>
               <p className="text-gray-400">
-                Com uma visão inovadora e voltada para o crescimento, a NORMITH-TACOS está determinada a conquistar seu espaço no mercado. A empresa está comprometida em fazer de seus clientes não apenas os melhores, mas também parceiros fiéis. Com máquinas modernas e tecnologia de ponta, a NORMITH-TACOS busca aliar quantidade à qualidade, garantindo a satisfação de seus clientes em cada taco produzido.
+                A NORMITH Tacos projeta seu horizonte através da constante modernização tecnológica e da expansão de suas fronteiras metodológicas. O compromisso permanente da NORMITH está voltado para o desbravamento de novas técnicas de fabricação e a incorporação de componentes inovadores que ditem as próximas tendências do bilhar mundial. O foco estratégico está em preparar e elevar o nível de jogadores e usuários ao mais alto patamar competitivo, estabelecendo os tacos NORMITH como a ferramenta definitiva para conquistas extraordinárias e perpetuando a marca como sinônimo de vitória no subconsciente de cada competidor.
               </p>
             </div>
-            <p className="text-gray-400">
-              Assim, a NORMITH-TACOS surge como um marco de uma nova era no universo da sinuca e bilhar. Graças ao empenho, dedicação e visão, a empresa se estabeleceu como referência em qualidade e excelência. E com o compromisso contínuo com a inovação e o aprimoramento, a NORMITH-TACOS está pronta para escrever os próximos capítulos de sua história de sucesso.
-            </p>
           </div>
         </div>
       </div>

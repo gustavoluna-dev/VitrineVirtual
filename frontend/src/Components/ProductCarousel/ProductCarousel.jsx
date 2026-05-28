@@ -71,7 +71,7 @@ export default function ProductCarousel() {
               perMove: 1,
               gap: '2rem',
               autoplay: true,
-              interval: 20000, // Moves automatically after 20 seconds
+              interval: 10000, // Moves automatically after 10 seconds
               pauseOnHover: true,
               arrows: true,
               pagination: true,
