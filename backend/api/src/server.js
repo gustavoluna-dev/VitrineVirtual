@@ -3,6 +3,7 @@ import express from 'express'; // O Express é o framework que cria o servidor H
 import cors from 'cors';       // O CORS permite que seu frontend React acesse este servidor sem bloqueio de segurança
 import dotenv from 'dotenv';   // Carrega as variáveis de ambiente do arquivo .env
 import db from './config/db.js'; // Importa a nossa Pool de conexão com o banco MySQL que criamos
+import bcrypt from 'bcryptjs'; // Fazemos o Hash da senha -> Pegamos a senha do usuário e escondemos ela numa senha fake maior
 
 // Inicializa a leitura das variáveis de ambiente do .env
 dotenv.config();
@@ -109,6 +110,68 @@ app.post('/api/produtos', async (req, res) => {
   } catch (error) {
     console.error('Erro ao cadastrar produto:', error.message);
     res.status(500).json({ error: 'Erro ao salvar produto no banco de dados.' });
+  }
+});
+
+// ==========================================
+// ROTAS DE GERENCIAMENTO DE USUÁRIOS
+// ==========================================
+
+// 1. Listar Usuários (GET)
+app.get('/api/usuarios', async (req, res) => {
+  try {
+    const [linhas] = await db.query('SELECT ID_USUARIO, NOME, EMAIL, TIPO, CRIADO_EM FROM USUARIOS');
+    res.status(200).json(linhas);
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error.message);
+    res.status(500).json({ error: 'Erro ao buscar usuários no banco de dados.' });
+  }
+});
+
+// 2. Cadastrar Novo Usuário (POST)
+app.post('/api/usuarios', async (req, res) => {
+  try {
+    const { NOME, EMAIL, SENHA, TIPO } = req.body;
+
+    if (!NOME || !EMAIL || !SENHA) {
+      return res.status(400).json({ error: 'Preencha todos os campos obrigatórios (nome, e-mail e senha).' });
+    }
+
+    const saltRounds = 10;
+    const senhaCriptografada = await bcrypt.hash(SENHA, saltRounds);
+
+    const sql = 'INSERT INTO USUARIOS (NOME, EMAIL, SENHA, TIPO) VALUES (?, ?, ?, ?)';
+    const [resultado] = await db.query(sql, [NOME, EMAIL, senhaCriptografada, TIPO || 'colaborador']);
+
+    res.status(201).json({
+      mensagem: 'Usuário cadastrado com sucesso!',
+      id_usuario: resultado.insertId
+    });
+  } catch (error) {
+    console.error('Erro ao cadastrar usuário:', error.message);
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: 'Este e-mail já está cadastrado no sistema.' });
+    }
+    res.status(500).json({ error: 'Erro ao salvar usuário no banco de dados.' });
+  }
+});
+
+// 3. Deletar Usuário (DELETE)
+app.delete('/api/usuarios/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sql = 'DELETE FROM USUARIOS WHERE ID_USUARIO = ?';
+    const [resultado] = await db.query(sql, [id]);
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    res.status(200).json({ mensagem: 'Usuário removido com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao deletar usuário:', error.message);
+    res.status(500).json({ error: 'Erro ao remover usuário do banco de dados.' });
   }
 });
 

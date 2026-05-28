@@ -1,4 +1,5 @@
 import React from 'react'
+import logoNormith from '../../assets/Logo_Original_icon.png'
 
 export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) {
   
@@ -61,14 +62,13 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, setIsCol
         }`}>
           {isCollapsed ? (
             /* Logo compacta quando retraído */
-            <div className="w-10 h-10 bg-black-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-xs">
+            <div className="w-10 h-10 bg-black-600 rounded-xl flex items-center justify-center text-black font-black shadow-black text-xl shadow-xs">
               N
             </div>
           ) : (
-            /* Logo expandida */
+            /* Logo da Normith quando a Sidebar é expandida */
             <>
-              <img src='../../assets/Logo_Original_icon.png' alt='Logo do Site' className='w-20 h-20'></img>
-              <h2 className="text-lg font-bold text-slate-800 tracking-tight">Admin Panel</h2>
+              <img src={logoNormith} alt='Logo do Site' className='w-38 h-20 items-center justify-center ml-5 mt-5' />
             </>
           )}
         </div>
