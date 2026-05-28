@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import Navbar from './components/navbar/Navbar'
 import Hero from './components/hero/Hero'
+import ProductCarousel from './Components/ProductCarousel/ProductCarousel'
 import Categories from './components/categories/Categories'
 import Features from './components/features/Features'
+import About from './Components/About/About'
 import ContactSection from './components/contact/ContactSection'
 import BudgetPage from './components/Orçamento/BudgetPage' 
 
@@ -17,8 +19,10 @@ function App() {
       {currentPage === 'home' ? (
         <>
           <Hero />
+          <ProductCarousel />
           <Categories />
           <Features />
+          <About />
           <ContactSection />
         </>
       ) : (
