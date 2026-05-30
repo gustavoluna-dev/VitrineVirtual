@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Camera, Phone } from "lucide-react"
 import logo from "@/assets/logoNavbar.png"
+import WhatsappLogo from "@/assets/WhatsApp.png"
+import InstagramLogo from "@/assets/Instagram.png"
 
 export default function Navbar({ setCurrentPage, currentPage }) {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -45,8 +47,8 @@ export default function Navbar({ setCurrentPage, currentPage }) {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 w-full bg-[#0a0a0a]/95 backdrop-blur-md text-white px-8 flex items-center justify-between border-b border-white/10 transition-all duration-300 ${
-      isScrolled ? "py-2 shadow-lg shadow-black/20" : "py-4"
+    <nav className={`fixed top-0 left-0 z-50 w-full bg-[#0a0a0a]/95 backdrop-blur-md text-white px-8 flex items-center justify-between border-b border-white/10 transition-all duration-300 ${
+      isScrolled ? "h-16 shadow-lg shadow-black/20" : "h-24"
     }`}>
       
       {/* Logo */}
@@ -59,10 +61,7 @@ export default function Navbar({ setCurrentPage, currentPage }) {
         <img 
           src={logo} 
           alt="Logo" 
-          className={`rounded-full object-cover transition-all duration-300 ${
-            isScrolled ? "w-48 h-36" : "w-70 h-50"
-          }`} 
-        />
+          className="w-70 h-auto object-contain" />
       </button>
       
       
@@ -108,19 +107,44 @@ export default function Navbar({ setCurrentPage, currentPage }) {
       </div>
 
       {/* Ícones da Direita */}
-      <div className="flex items-center gap-4">
-        <a href="https://www.instagram.com/normithtacos/" target="_blank" rel="noopener noreferrer" className="hover:text-orange-400">
-          <Camera className="w-5 h-5" />
-        </a>
-        <a href="tel:5511961924104" className="hover:text-orange-400">
-          <Phone className="w-5 h-5" />
-        </a>
-        <a href="https://wa.me/5511961924104" target="_blank" rel="noopener noreferrer">
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-none font-bold uppercase text-xs px-6 cursor-pointer">
-            Falar Conosco
-          </Button>
-        </a>
-      </div>
+      <div className="flex items-center">
+      <a
+          href="https://www.instagram.com/normithtacos/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:scale-110 transition-transform"
+      >
+          <img
+          src={InstagramLogo}
+          alt="Instagram"
+          className="w-14 h-14 object-contain"
+      />
+  </a>
+
+      <a
+         href="https://wa.me/5511961924104"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="ml-2 hover:scale-110 transition-transform"
+  >
+      <img
+        src={WhatsappLogo}
+        alt="WhatsApp"
+        className="w-14 h-14 object-contain"
+    />
+  </a>
+
+    <a
+      href="https://wa.me/5511961924104"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="ml-6"
+  >
+    <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-none font-bold uppercase text-xs px-6 cursor-pointer">
+      FALAR CONOSCO
+    </Button>
+  </a>
+</div>
     </nav>
   )
 }
