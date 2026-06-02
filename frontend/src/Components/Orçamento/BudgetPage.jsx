@@ -29,14 +29,14 @@ export default function BudgetPage({ onBack }) {
   }
 
   return (
-    <section className="bg-[#0a0a0a] text-white min-h-screen py-16 px-8 flex flex-col justify-center items-center">
+    <section className="bg-[#0a0a0a] text-white min-h-screen pt-32 pb-16 px-8 flex flex-col justify-center items-center">
       <div className="max-w-4xl w-full">
         
         {/* Botão de Voltar */}
         {onBack && (
           <button 
             onClick={onBack}
-            className="flex items-center gap-2 text-gray-400 hover:text-orange-500 mb-8 font-bold uppercase text-sm transition-colors cursor-pointer bg-transparent border-none"
+            className="flex items-center gap-2 text-gray-400 hover:text-orange-500 mb-8 font-bold uppercase text-sm transition-colors cursor-pointer bg-transparent border-none"  
           >
             <ArrowLeft className="w-4 h-4" /> Voltar para o Início
           </button>
