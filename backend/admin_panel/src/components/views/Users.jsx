@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 export default function UsuariosView() {
-  // Estado para armazenar os usuários carregados da API
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Estados para o formulário de cadastro de novos usuários
   const [formData, setFormData] = useState({ nome: '', email: '', senha: '', tipo: 'colaborador' });
   const [showModal, setShowModal] = useState(false);
 
-  // URL da sua API Backend
   const API_URL = 'http://localhost:5000/api/usuarios';
 
-  // 🔄 Função para buscar os usuários no banco de dados
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -28,12 +24,10 @@ export default function UsuariosView() {
     }
   };
 
-  // Carrega os usuários assim que o componente abre na tela
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // ➕ Função para salvar um novo usuário no banco
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
@@ -54,13 +48,12 @@ export default function UsuariosView() {
       alert('Usuário cadastrado com sucesso!');
       setFormData({ nome: '', email: '', senha: '', tipo: 'colaborador' });
       setShowModal(false);
-      fetchUsers(); // Recarrega a tabela de usuários
+      fetchUsers();
     } catch (err) {
       alert(err.message);
     }
   };
 
-  // ❌ Função para remover um usuário do banco
   const handleDeleteUser = async (id) => {
     if (!confirm('Deseja realmente excluir este usuário permanentemente?')) return;
     try {
@@ -70,7 +63,7 @@ export default function UsuariosView() {
       if (!response.ok) throw new Error(result.error || 'Erro ao deletar usuário.');
 
       alert(result.mensagem);
-      fetchUsers(); // Recarrega a lista atualizada
+      fetchUsers();
     } catch (err) {
       alert(err.message);
     }
@@ -81,7 +74,7 @@ export default function UsuariosView() {
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-xs p-6">
-      {/* Cabeçalho */}
+      { }
       <div className="flex justify-between items-center mb-6">
         <h4 className="text-lg font-bold text-slate-800">Gerenciamento de Usuários</h4>
         <button 
@@ -92,7 +85,7 @@ export default function UsuariosView() {
         </button>
       </div>
 
-      {/* Tabela de Usuários Reais */}
+      { }
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -129,7 +122,7 @@ export default function UsuariosView() {
         </table>
       </div>
 
-      {/* Modal Simples de Cadastro */}
+      { }
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50">
           <form onSubmit={handleAddUser} className="bg-white p-6 rounded-2xl w-full max-w-md border border-slate-100">

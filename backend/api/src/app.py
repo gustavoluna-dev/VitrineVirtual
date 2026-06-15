@@ -217,6 +217,82 @@ def login_usuario():
         print('Erro ao realizar login:', error)
         return jsonify({"error": "Erro interno ao realizar o login."}), 500
 
+# 5. Obter todas as Configurações do Site (GET)
+@app.route('/api/configuracoes', methods=['GET'])
+def get_configuracoes():
+    try:
+        linhas = execute_query('SELECT CHAVE, VALOR FROM CONFIGURACOES_SITE')
+        # Transforma a lista de linhas em um único dicionário para conveniência
+        dicionario = {linha['CHAVE']: linha['VALOR'] for linha in linhas}
+        return jsonify(dicionario), 200
+    except Exception as error:
+        print('Erro ao buscar configurações do site:', error)
+        return jsonify({"error": "Erro ao buscar configurações no banco de dados."}), 500
+
+# 6. Salvar/Atualizar Configurações do Site (POST)
+@app.route('/api/configuracoes', methods=['POST'])
+def save_configuracoes():
+    try:
+        dados = request.get_json() or {}
+        
+        # Faz o upsert para cada chave/valor enviada
+        for chave, valor in dados.items():
+            sql = """
+                INSERT INTO CONFIGURACOES_SITE (CHAVE, VALOR) VALUES (%s, %s)
+                ON DUPLICATE KEY UPDATE VALOR = %s
+            """
+            execute_query(sql, [chave, str(valor), str(valor)], is_write=True)
+            
+        return jsonify({"mensagem": "Configurações salvas com sucesso!"}), 200
+    except Exception as error:
+        print('Erro ao salvar configurações do site:', error)
+        return jsonify({"error": "Erro ao salvar configurações no banco de dados."}), 500
+
+# 7. Upload de Imagem Físico (POST)
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    try:
+        import uuid
+        from werkzeug.utils import secure_filename
+        
+        # Verifica se o arquivo foi enviado no FormData
+        if 'file' not in request.files:
+            return jsonify({"error": "Nenhum arquivo enviado."}), 400
+            
+        arquivo = request.files['file']
+        
+        if arquivo.filename == '':
+            return jsonify({"error": "Nome de arquivo vazio."}), 400
+            
+        # Validação simples de extensões permitidas
+        extensoes_permitidas = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+        def allowed_file(filename):
+            return '.' in filename and filename.rsplit('.', 1)[1].lower() in extensoes_permitidas
+            
+        if not allowed_file(arquivo.filename):
+            return jsonify({"error": "Extensão de arquivo não permitida. Use apenas PNG, JPG, JPEG, WEBP ou GIF."}), 400
+            
+        # Prepara a pasta de uploads estática
+        pasta_upload = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
+        os.makedirs(pasta_upload, exist_ok=True)
+        
+        # Cria um nome único para o arquivo para evitar colisões
+        ext = arquivo.filename.rsplit('.', 1)[1].lower()
+        nome_unico = f"{uuid.uuid4().hex}.{ext}"
+        caminho_completo = os.path.join(pasta_upload, nome_unico)
+        
+        # Salva o arquivo fisicamente
+        arquivo.save(caminho_completo)
+        
+        # Gera a URL de retorno dinâmica com base na porta configurada
+        PORT = int(os.getenv("PORT", 5000))
+        url_retorno = f"http://localhost:{PORT}/static/uploads/{nome_unico}"
+        
+        return jsonify({"url": url_retorno}), 200
+    except Exception as error:
+        print('Erro ao realizar upload do arquivo:', error)
+        return jsonify({"error": "Erro interno ao processar o upload do arquivo."}), 500
+
 # ==========================================
 # INICIALIZAÇÃO DO SERVIDOR
 # ==========================================

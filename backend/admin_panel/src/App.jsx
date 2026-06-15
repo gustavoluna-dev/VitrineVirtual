@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 // Importa os Componentes Globais de Layout
 import Sidebar from './components/templates/Sidebar'
@@ -10,8 +10,12 @@ import EditeSiteView from './components/views/EditSite'
 import AtividadesView from './components/views/Activities'
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => localStorage.getItem('adminActiveTab') || 'dashboard');
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('adminActiveTab', activeTab);
+  }, [activeTab]);
 
   // Mapeamento dos títulos dinâmicos de acordo com a página selecionada
   const pageTitles = {
@@ -76,15 +80,15 @@ export default function App() {
             </p>
           </div>
 
-          {/* Botão Hambúrguer de Controle da Barra Lateral */}
+          {/* Botão de Sair (Logout) */}
           <button 
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2.5 hover:bg-slate-50 text-slate-600 rounded-xl transition-all cursor-pointer border border-slate-100 hover:border-slate-200"
-            aria-label="Alternar menu lateral"
-            title="Alternar menu"
+            onClick={() => console.log('Logout placeholder - to be implemented')}
+            className="p-2.5 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl transition-all cursor-pointer border border-slate-100 hover:border-rose-100"
+            aria-label="Sair do sistema"
+            title="Sair do sistema"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
             </svg>
           </button>
         </header>

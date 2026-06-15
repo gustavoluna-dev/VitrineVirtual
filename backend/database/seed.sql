@@ -1,5 +1,7 @@
 USE VITRINE_NORMITH;
 
+SET FOREIGN_KEY_CHECKS = 0;
+
 DELETE FROM ORCAMENTOS;
 DELETE FROM PRODUTOS;
 DELETE FROM CATEGORIAS;
@@ -7,7 +9,7 @@ DELETE FROM USUARIOS;
 
 
 INSERT INTO USUARIOS (NOME, EMAIL, SENHA, TIPO) VALUES
-('Administrador', 'admin@vitrinevirtual.com', '$2b$10$rP5n8b9VexF1Y2HmWgBvJuQ7QG8yWzB2z/c0R.QG5u0CgW0p8N5Jq', 'admin'); -- Senha: admin123
+('Administrador', 'admin@vitrinevirtual.com', '$2b$10$rP5n8b9VexF1Y2HmWgBvJuQ7QG8yWzB2z/c0R.QG5u0CgW0p8N5Jq', 'admin'); -- A senha não é essa, é apenas um Hash criado pelo Bcrypt aleatóriamente. Senha: admin123
 
 -- Colocando as categorias do front
 INSERT INTO CATEGORIAS (ID_CATEGORIA, NOME, DESCRICAO, ICONE, IMAGEM_URL) VALUES
@@ -35,4 +37,20 @@ INSERT INTO ORCAMENTOS (NOME, EMAIL, WHATSAPP, MENSAGEM, PRODUTO_DESEJADO_ID, ST
 ('Carlos Silva', 'carlos@gmail.com', '11999998888', 'Gostaria de saber se o Taco Masterpiece Ébano tem frete grátis para São Paulo.', 5, 'NOVO'),
 ('Mariana Costa', 'mariana.costa@hotmail.com', '21988887777', 'Quero encomendar um taco personalizado com peso de 590g e madeira Goiabão.', NULL, 'EM_ATENDIMENTO');
 
+-- 5. Configurações Iniciais do Site
+DELETE FROM CONFIGURACOES_SITE;
+INSERT INTO CONFIGURACOES_SITE (CHAVE, VALOR) VALUES
+('nome_loja', 'Vitrine Virtual IFSP'),
+('descricao_institucional', 'A melhor vitrine online para expor produtos locais e impulsionar suas vendas regionais de forma simples.'),
+('email_contato', 'contato@vitrineifsp.com.55'),
+('telefone_comercial', '(11) 98765-4321'),
+('hero_banner', 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1200'),
+('galeria_1', 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600'),
+('galeria_2', 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600'),
+('galeria_3', 'https://images.unsplash.com/photo-1609137144813-90d1bf3b867c?q=80&w=600'),
+('galeria_4', 'https://images.unsplash.com/photo-1577416418012-7474b291d95a?q=80&w=600');
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 SELECT * FROM USUARIOS;
+SELECT * FROM CONFIGURACOES_SITE;
