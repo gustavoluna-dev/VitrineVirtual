@@ -110,6 +110,48 @@ def create_produto():
         print('Erro ao cadastrar produto:', error)
         return jsonify({"error": "Erro ao salvar produto no banco de dados."}), 500
 
+# Rota 4.1: Atualizar um Produto existente (Edição de Produto)
+@app.route('/api/produtos/<int:id>', methods=['PUT'])
+def update_produto(id):
+    try:
+        dados = request.get_json() or {}
+        
+        nome = dados.get('NOME')
+        descricao = dados.get('DESCRICAO')
+        preco = dados.get('PRECO')
+        imagem_url = dados.get('IMAGEM_URL')
+        estoque = dados.get('ESTOQUE', 1)
+        madeira = dados.get('MADEIRA')
+        peso = dados.get('PESO')
+        tamanho = dados.get('TAMANHO')
+        virola = dados.get('VIROLA')
+        categoria_id = dados.get('CATEGORIA_ID')
+
+        if not nome or not descricao or preco is None or not imagem_url:
+            return jsonify({"error": "Por favor, preencha todos os campos obrigatórios (nome, descrição, preço e imagem)."}), 400
+
+        sql = """
+            UPDATE PRODUTOS 
+            SET NOME = %s, DESCRICAO = %s, PRECO = %s, IMAGEM_URL = %s, ESTOQUE = %s, 
+                MADEIRA = %s, PESO = %s, TAMANHO = %s, VIROLA = %s, CATEGORIA_ID = %s
+            WHERE ID_PRODUTO = %s
+        """
+        
+        valores = [nome, descricao, preco, imagem_url, estoque, madeira, peso, tamanho, virola, categoria_id, id]
+        resultado = execute_query(sql, valores, is_write=True)
+
+        if resultado["affectedRows"] == 0:
+            return jsonify({"error": "Produto não encontrado."}), 404
+
+        return jsonify({
+            "mensagem": "Produto atualizado com sucesso!",
+            "dados": dados
+        }), 200
+    except Exception as error:
+        print('Erro ao atualizar produto:', error)
+        return jsonify({"error": "Erro ao atualizar produto no banco de dados."}), 500
+
+
 # ==========================================
 # ROTAS DE GERENCIAMENTO DE USUÁRIOS
 # ==========================================

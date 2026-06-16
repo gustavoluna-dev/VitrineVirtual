@@ -18,6 +18,25 @@ export default function EditeSiteView() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadLoading, setUploadLoading] = useState(false);
 
+  // Estados para edição dos produtos (tabela PRODUTOS)
+  const [isEditingProduct, setIsEditingProduct] = useState(false);
+  const [editingGalleryIndex, setEditingGalleryIndex] = useState(0);
+  const [categoriasList, setCategoriasList] = useState([]);
+  const [prodId, setProdId] = useState(1);
+  const [prodNome, setProdNome] = useState('');
+  const [prodDescricao, setProdDescricao] = useState('');
+  const [prodPreco, setProdPreco] = useState(0);
+  const [prodImagemUrl, setProdImagemUrl] = useState('');
+  const [prodEstoque, setProdEstoque] = useState(1);
+  const [prodMadeira, setProdMadeira] = useState('');
+  const [prodPeso, setProdPeso] = useState('');
+  const [prodTamanho, setProdTamanho] = useState('');
+  const [prodVirola, setProdVirola] = useState('');
+  const [prodCategoriaId, setProdCategoriaId] = useState('');
+  const [isSavingProduct, setIsSavingProduct] = useState(false);
+  const [productFile, setProductFile] = useState(null);
+  const [productUploadLoading, setProductUploadLoading] = useState(false);
+
   const API_URL = 'http://localhost:5000/api/configuracoes';
   const UPLOAD_URL = 'http://localhost:5000/api/upload';
 
@@ -49,8 +68,53 @@ export default function EditeSiteView() {
     }
   };
 
+  // Abre o editor de produto para a posição correspondente (idx) da lista
+  const openProductEditor = async (idx) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/produtos');
+      if (!response.ok) throw new Error('Erro ao buscar produtos.');
+      const data = await response.json();
+      if (data && data.length > idx) {
+        const prod = data[idx];
+        setProdId(prod.ID_PRODUTO);
+        setProdNome(prod.NOME || '');
+        setProdDescricao(prod.DESCRICAO || '');
+        setProdPreco(prod.PRECO || 0);
+        setProdImagemUrl(prod.IMAGEM_URL || '');
+        setProdEstoque(prod.ESTOQUE || 1);
+        setProdMadeira(prod.MADEIRA || '');
+        setProdPeso(prod.PESO || '');
+        setProdTamanho(prod.TAMANHO || '');
+        setProdVirola(prod.VIROLA || '');
+        setProdCategoriaId(prod.CATEGORIA_ID || '');
+        
+        setEditingGalleryIndex(idx);
+        setIsEditingProduct(true);
+      } else {
+        alert(`Não há um produto correspondente no banco de dados para a posição ${idx + 1}.`);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar produto para edição:', err);
+      alert('Erro ao buscar dados do produto.');
+    }
+  };
+
+  // Carrega a lista de categorias do banco
+  const fetchCategorias = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/categorias');
+      if (response.ok) {
+        const data = await response.json();
+        setCategoriasList(data);
+      }
+    } catch (err) {
+      console.error('Erro ao buscar categorias:', err);
+    }
+  };
+
   useEffect(() => {
     fetchSettings();
+    fetchCategorias();
   }, []);
 
   // Salva apenas as informações textuais do site no banco de dados
@@ -174,6 +238,71 @@ export default function EditeSiteView() {
     }
   };
 
+  // Salva os dados atualizados do produto no MySQL
+  const handleSaveProduct = async (e) => {
+    e.preventDefault();
+    try {
+      setIsSavingProduct(true);
+      
+      let finalImageUrl = prodImagemUrl;
+      if (productFile) {
+        setProductUploadLoading(true);
+        const formData = new FormData();
+        formData.append('file', productFile);
+        
+        const uploadResponse = await fetch(UPLOAD_URL, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const uploadResult = await uploadResponse.json();
+        if (!uploadResponse.ok) throw new Error(uploadResult.error || 'Erro no upload da imagem.');
+        finalImageUrl = uploadResult.url;
+        setProdImagemUrl(finalImageUrl);
+        setProductFile(null);
+      }
+
+      const payload = {
+        NOME: prodNome,
+        DESCRICAO: prodDescricao,
+        PRECO: parseFloat(prodPreco),
+        IMAGEM_URL: finalImageUrl,
+        ESTOQUE: parseInt(prodEstoque),
+        MADEIRA: prodMadeira,
+        PESO: prodPeso,
+        TAMANHO: prodTamanho,
+        VIROLA: prodVirola,
+        CATEGORIA_ID: prodCategoriaId ? parseInt(prodCategoriaId) : null
+      };
+
+      const response = await fetch(`http://localhost:5000/api/produtos/${prodId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Erro ao atualizar produto.');
+      }
+      
+      alert('Produto atualizado com sucesso no banco de dados!');
+      setIsEditingProduct(false);
+
+      // Sincroniza a imagem correspondente do carrossel/galeria
+      const novaGaleria = [...galeria];
+      novaGaleria[editingGalleryIndex] = finalImageUrl;
+      setGaleria(novaGaleria);
+      await saveImageConfig(`galeria_${editingGalleryIndex + 1}`, finalImageUrl);
+      
+    } catch (err) {
+      alert(`Falha ao salvar produto: ${err.message}`);
+    } finally {
+      setIsSavingProduct(false);
+      setProductUploadLoading(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="text-slate-500 font-semibold p-6">Carregando...</div>;
   }
@@ -259,7 +388,7 @@ export default function EditeSiteView() {
               return (
                 <div 
                   key={idx}
-                  onClick={() => setActiveUploadTarget(targetKey)}
+                  onClick={() => openProductEditor(idx)}
                   className="relative aspect-video rounded-2xl bg-slate-50 border-2 border-dashed border-slate-200 overflow-hidden cursor-pointer hover:border-blue-400 hover:bg-slate-100/50 transition-all duration-300 group flex items-center justify-center"
                 >
                   {imgUrl ? (
@@ -273,21 +402,15 @@ export default function EditeSiteView() {
                       {/* Overlay de Ação */}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-3 z-10">
                         <button 
-                          onClick={() => setActiveUploadTarget(targetKey)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openProductEditor(idx);
+                          }}
                           className="bg-white/90 hover:bg-white p-2.5 rounded-full text-slate-800 hover:text-blue-600 transition-all shadow-md hover:scale-110 cursor-pointer"
-                          title="Alterar imagem"
+                          title="Editar Produto"
                         >
                           <svg className="w-5 h-5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                          </svg>
-                        </button>
-                        <button 
-                          onClick={(e) => handleRemoveImage(targetKey, e)}
-                          className="bg-rose-500/90 hover:bg-rose-600 text-white p-2.5 rounded-full transition-all shadow-md hover:scale-110 cursor-pointer"
-                          title="Remover imagem"
-                        >
-                          <svg className="w-5 h-5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                           </svg>
                         </button>
                       </div>
@@ -470,6 +593,193 @@ export default function EditeSiteView() {
                 {uploadLoading ? 'Enviando...' : 'Salvar Imagem'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. MODAL DE EDIÇÃO DE PRODUTO COMPLETO */}
+      {isEditingProduct && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-slate-100 shadow-2xl p-6 w-full max-w-2xl my-8 animate-scale-in max-h-[90vh] overflow-y-auto">
+            {/* Cabeçalho do Modal */}
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+              <div>
+                <h5 className="text-xl font-bold text-slate-800">Editar Produto Relacionado</h5>
+                <p className="text-xs text-slate-400 font-medium mt-1">Altere todos os atributos do taco na tabela PRODUTOS</p>
+              </div>
+              <button 
+                onClick={() => setIsEditingProduct(false)}
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer p-1"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProduct} className="space-y-6">
+              {/* Nome e Preço */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Nome do Produto</label>
+                  <input 
+                    type="text" 
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium text-slate-800"
+                    value={prodNome}
+                    onChange={(e) => setProdNome(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Preço (R$)</label>
+                  <input 
+                    type="number" 
+                    step="0.01"
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium text-slate-800"
+                    value={prodPreco}
+                    onChange={(e) => setProdPreco(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Descrição */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Descrição Completa</label>
+                <textarea 
+                  rows="3" 
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium text-slate-800"
+                  value={prodDescricao}
+                  onChange={(e) => setProdDescricao(e.target.value)}
+                ></textarea>
+              </div>
+
+              {/* Imagem do Produto: URL ou Arquivo */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">URL da Imagem</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium text-slate-800 text-sm"
+                    value={prodImagemUrl}
+                    onChange={(e) => setProdImagemUrl(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Ou Upload de Foto Local</label>
+                  <div className="relative border border-slate-200 rounded-xl p-2.5 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setProductFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    <span className="text-xs text-slate-500 truncate max-w-[180px]">
+                      {productFile ? productFile.name : 'Selecionar arquivo...'}
+                    </span>
+                    <span className="bg-slate-100 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600">Escolher</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Especificações Físicas */}
+              <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 space-y-4">
+                <h6 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Especificações do Taco</h6>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Madeira</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm text-slate-800"
+                      value={prodMadeira}
+                      onChange={(e) => setProdMadeira(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Peso</label>
+                    <input 
+                      type="text" 
+                      placeholder="Ex: 540g"
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm text-slate-800"
+                      value={prodPeso}
+                      onChange={(e) => setProdPeso(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Tamanho</label>
+                    <input 
+                      type="text" 
+                      placeholder="Ex: 1.45m"
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm text-slate-800"
+                      value={prodTamanho}
+                      onChange={(e) => setProdTamanho(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Virola</label>
+                    <input 
+                      type="text" 
+                      placeholder="Ex: Celerom 11mm"
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition text-sm text-slate-800"
+                      value={prodVirola}
+                      onChange={(e) => setProdVirola(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Estoque e Categoria */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Estoque Disponível</label>
+                  <input 
+                    type="number" 
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium text-slate-800"
+                    value={prodEstoque}
+                    onChange={(e) => setProdEstoque(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Categoria</label>
+                  <select 
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium text-slate-800"
+                    value={prodCategoriaId}
+                    onChange={(e) => setProdCategoriaId(e.target.value)}
+                  >
+                    <option value="">Selecione uma categoria...</option>
+                    {categoriasList.map((cat) => (
+                      <option key={cat.ID_CATEGORIA} value={cat.ID_CATEGORIA}>
+                        {cat.NOME}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Ações */}
+              <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setIsEditingProduct(false)}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold px-5 py-2.5 rounded-xl transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSavingProduct || productUploadLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition shadow-sm cursor-pointer disabled:opacity-50"
+                >
+                  {isSavingProduct || productUploadLoading ? 'Salvando...' : 'Salvar no Banco'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
