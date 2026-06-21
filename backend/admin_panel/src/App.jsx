@@ -72,7 +72,7 @@ export default function App() {
         {/* Cabeçalho Superior (Header) */}
         <header className="bg-white border-b border-slate-100 py-6 px-8 flex justify-between items-center sticky top-0 z-30">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight" style={{ color: '#1e293b'}}>
               {pageTitles[activeTab]?.title}
             </h1>
             <p className="text-sm text-slate-400 font-medium mt-1">
