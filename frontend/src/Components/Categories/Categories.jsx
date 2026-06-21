@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card"
+import { Card } from "@/Components/ui/card"
 import { GraduationCap, Star, Crown, Wrench } from "lucide-react"
 
 export default function Categories() {
