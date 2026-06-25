@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/Components/ui/button"
 import { Camera, Phone } from "lucide-react"
 import logo from "@/assets/logoNavbar.png"
 import WhatsappLogo from "@/assets/WhatsApp.png"

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import Navbar from './components/navbar/Navbar'
-import Hero from './components/hero/Hero'
+import Navbar from './Components/Navbar/Navbar'
+import Hero from './Components/Hero/Hero'
 import ProductCarousel from './Components/ProductCarousel/ProductCarousel'
-import Categories from './components/categories/Categories'
-import Features from './components/features/Features'
+import Categories from './Components/Categories/Categories'
+import Features from './Components/Features/Features'
 import About from './Components/About/About'
-import ContactSection from './components/contact/ContactSection'
-import BudgetPage from './components/Orçamento/BudgetPage' 
+import ContactSection from './Components/Contact/ContactSection'
+import BudgetPage from './Components/Orçamento/BudgetPage' 
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')

@@ -321,7 +321,7 @@ export default function EditeSiteView() {
 
         {/* MOCKUP DO HERO BANNER PRINCIPAL (ESTILO 21:9) */}
         <div className="space-y-3">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Banner Principal</span>
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Banner Principal</span>
           
           <div className="relative w-full aspect-[21/9] rounded-[24px] bg-[#0a0a0a] overflow-hidden border border-slate-100 shadow-xs group">
             {heroBanner ? (
@@ -380,7 +380,9 @@ export default function EditeSiteView() {
 
         {/* MOCKUP DO GRID DA GALERIA SECUNDÁRIA (ESTILO 4 COLUNAS) */}
         <div className="space-y-3">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Carrossel</span>
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Edite os Tacos do Carrossel</span>
+          <br></br>
+          <span className="text-[14px] font-[500] text-slate-400 tracking-wider">- Altere descrição, preço, imagem e outros.</span>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {galeria.map((imgUrl, idx) => {
