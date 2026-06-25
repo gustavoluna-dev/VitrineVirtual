@@ -91,7 +91,7 @@ export default function ProductCarousel() {
             {featuredTacos.map((taco) => (
               <SplideSlide key={taco.id}>
                 <div className="carousel-card bg-[#161616] border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col h-[500px] transition-all duration-300 hover:border-orange-500/30 group">
-                  <div className="h-56 relative overflow-hidden">
+                  <div className="h-200 relative overflow-hidden">
                     <img
                       src={taco.image}
                       alt={taco.name}
